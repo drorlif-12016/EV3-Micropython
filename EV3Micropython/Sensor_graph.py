@@ -1,51 +1,73 @@
 #!/usr/bin/env pybricks-micropython
-
 from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import UltrasonicSensor
+from pybricks.ev3devices import UltrasonicSensor, Motor
 from pybricks.parameters import Port
 from pybricks.tools import wait
-from pybricks.media.ev3dev import Font
+import math
 
 ev3 = EV3Brick()
 us = UltrasonicSensor(Port.S1)
+motor = Motor(Port.B)
 
-big = Font(size=20)
-ev3.screen.set_font(big)
+WIDTH = 178
+HEIGHT = 128
+MAX_DIST = 1000   # mm
 
-MAX_DIST = 1000   # max distance in mm shown on graph (1 meter)
-BAR_X = 120
-BAR_Y = 10
-BAR_WIDTH = 30
-BAR_HEIGHT = 100
+graph = [0] * WIDTH
+x = 0
+
+# Oscillation parameters
+AMPLITUDE = 500    # motor speed (deg/s)
+OMEGA = 0.15      # oscillation speed
+t = 1               # phase
 
 while True:
-    ev3.screen.clear()
+    # -----------------------------
+    # Motor oscillation
+    # -----------------------------
+    speed = int(AMPLITUDE * math.sin(t))
+    motor.run(speed)
+    t += OMEGA
 
+    # -----------------------------
     # Read distance
+    # -----------------------------
     dist = us.distance()
-
-    # Clamp distance to range
     if dist < 0:
         dist = 0
     if dist > MAX_DIST:
         dist = MAX_DIST
 
-    # Convert distance to bar height
-    bar = int((dist / MAX_DIST) * BAR_HEIGHT)
+    # Convert distance to screen Y (inverted)
+    y = int((dist / MAX_DIST) * (HEIGHT - 20))
+    y = HEIGHT - 1 - y
 
-    # Draw frame
-    ev3.screen.draw_box(BAR_X, BAR_Y, BAR_X + BAR_WIDTH, BAR_Y + BAR_HEIGHT)
+    # Store in history
+    graph[x] = y
 
-    # Draw filled bar (from bottom up)
-    ev3.screen.draw_box(
-        BAR_X + 2,
-        BAR_Y + BAR_HEIGHT - bar,
-        BAR_X + BAR_WIDTH - 2,
-        BAR_Y + BAR_HEIGHT
-    )
+    # -----------------------------
+    # Draw graph
+    # -----------------------------
+    ev3.screen.clear()
+    ev3.screen.draw_line(0, HEIGHT - 20, WIDTH, HEIGHT - 20)
 
-    # Draw text
-    ev3.screen.draw_text(5, 20, "Distance")
-    ev3.screen.draw_text(5, 50, str(dist) + " mm")
+    for i in range(1, x):
+        y1 = graph[i - 1]
+        y2 = graph[i]
 
-    wait(100)
+        # Main line
+        ev3.screen.draw_line(i - 1, y1, i, y2)
+
+        # Thickness (3 px)
+        ev3.screen.draw_line(i - 1, y1 + 1, i, y2 + 1)
+        ev3.screen.draw_line(i - 1, y1 - 1, i, y2 - 1)
+
+    # -----------------------------
+    # Advance graph
+    # -----------------------------
+    x += 1
+    if x >= WIDTH:
+        x = 0
+        graph = [0] * WIDTH
+
+    wait(50)
