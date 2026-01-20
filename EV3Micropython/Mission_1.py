@@ -2,12 +2,13 @@
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import Motor
 from pybricks.parameters import Port
+from pybricks.parameters import stop
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait
 from pybricks.media.ev3dev import Font
 
 
-# Initialize the EV3 Brick.
+# Initialize the EV3 Brick. and all devices
 ev3 = EV3Brick()
 
 big = Font(size=24)
@@ -23,7 +24,9 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=104)
 
 # Go forward and backwards for one meter.
 robot.straight(1000)
+wait(100)
 robot.straight(-1000)
+
 
 # robot Turn by 360 degrees and back again.
 # robot.turn(360)
