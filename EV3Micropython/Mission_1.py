@@ -15,8 +15,8 @@ small = Font(size=12)
 ev3.screen.set_font(big)
 
 # Initialize the motors.
-left_motor = Motor(Port.B)
-right_motor = Motor(Port.C)
+left_motor = Motor(Port.A)
+right_motor = Motor(Port.D)
 
 # Initialize the drive base.
 robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=104)
@@ -28,10 +28,10 @@ robot.straight(-1000)
 
 
 # robot Turn by 360 degrees and back again.
-# robot.turn(360)
-# robot.turn(-360)
+robot.turn(360)
+robot.turn(-360)
 
 while True:
-    ev3.screen.clear()
+    # ev3.screen.clear()
     ev3.screen.draw_text(12, 50, "Distence: " + str(robot.distance()))
     wait(100)

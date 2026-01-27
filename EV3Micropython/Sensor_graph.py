@@ -17,9 +17,10 @@ graph = [0] * WIDTH
 x = 0
 
 # Oscillation parameters
-AMPLITUDE = 500    # motor speed (deg/s)
-OMEGA = 0.15      # oscillation speed
-t = 1               # phase
+AMPLITUDE = 200    # motor speed (deg/s)
+OMEGA = 0.15       # oscillation speed
+t = 0              # phase
+
 
 while True:
     # -----------------------------
