@@ -7,7 +7,7 @@ import math
 
 ev3 = EV3Brick()
 us = UltrasonicSensor(Port.S1)
-motor = Motor(Port.B)
+motor = Motor(Port.A)
 
 WIDTH = 178
 HEIGHT = 128
